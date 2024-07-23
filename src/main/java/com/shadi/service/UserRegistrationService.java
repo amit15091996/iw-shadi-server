@@ -1,0 +1,10 @@
+package com.shadi.service;
+
+import java.util.Map;
+
+import com.shadi.profile.dto.UserRegistrationProfileDto;
+
+public interface UserRegistrationService {
+
+	public Map<String, Object> createProfile(UserRegistrationProfileDto dto);
+}
