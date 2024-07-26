@@ -2,23 +2,37 @@ package com.shadi.profile.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class UserRegistrationProfile {
+public class UserRegistrationProfile implements UserDetails {
 
+	
+	
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(unique = true)
 	private String mobileNumber;
@@ -38,6 +52,46 @@ public class UserRegistrationProfile {
 	private String residence;
 	private LocalDateTime createdTime;
 	@Lob
-	@Column(columnDefinition ="LONGBLOB")
+	@Column(columnDefinition = "LONGBLOB")
 	private byte[] profileImage;
+	@OneToMany(fetch = FetchType.EAGER,mappedBy = "userRegistrationProfile",cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonManagedReference
+	private List<UserRoles> userRole;
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+
+		return this.userRole.stream().map(role -> new SimpleGrantedAuthority(role.getRole())).toList();
+
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return this.mobileNumber;
+	}
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return UserDetails.super.isAccountNonExpired();
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return UserDetails.super.isAccountNonLocked();
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return UserDetails.super.isCredentialsNonExpired();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return UserDetails.super.isEnabled();
+	}
+
+	
 }

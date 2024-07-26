@@ -28,5 +28,6 @@ public class UserRegistrationProfileDto {
 	private String residence;
 	private Date createdTime;
 	private MultipartFile profileImage;
+	private String userRole;
 
 }

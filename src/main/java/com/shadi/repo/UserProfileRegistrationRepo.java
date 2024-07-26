@@ -8,4 +8,5 @@ import com.shadi.profile.entity.UserRegistrationProfile;
 @Repository
 public interface UserProfileRegistrationRepo extends JpaRepository<UserRegistrationProfile, String> {
 
+	UserRegistrationProfile findByMobileNumber(String mobileNumber);
 }
