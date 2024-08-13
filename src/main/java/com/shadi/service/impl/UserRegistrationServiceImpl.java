@@ -60,6 +60,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			userRegistrationProfile.setDob(dto.getDob());
 			userRegistrationProfile.setCreatedTime(LocalDateTime.now());
 			userRegistrationProfile.setProfileImage(dto.getProfileImage().getBytes());
+			userRegistrationProfile.setExtension(dto.getProfileImage().getOriginalFilename());
 			roles.setRole("USER");
 			userRegistrationProfile.setUserRole(Arrays.asList(roles));
 			roles.setUserRegistrationProfile(userRegistrationProfile);
@@ -71,7 +72,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		} catch (Exception e) {
 			map.put("message", "Profile creation failed");
 			map.put("error", e.getMessage()); // Add error message for better logging
-			throw new GenericException(e);
+			
 		}
 		return map;
 	}
@@ -97,7 +98,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 				userLoginMap.put(AppConstants.statusMessage, AppConstants.userLoggedInSuccesfully);
 				return userLoginMap;
 			} else {
-				throw new com.shadi.expection.NotFoundException("Sorry No user found with the given mobile number" + mobileNumber);
+				throw new com.shadi.expection.NotFoundException("Sorry No user found with the given mobile number : " + mobileNumber);
 			}
 		} catch (Exception e) {
 			throw new InternalServerError(e.getMessage());

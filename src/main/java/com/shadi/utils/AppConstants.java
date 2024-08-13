@@ -85,6 +85,8 @@ public class AppConstants {
 	public static final String NOZZLE_TWO_READING= "nozzleTwoReading";
 	public static final String NOZZLE_THREE_READING= "nozzleThreeReading";
 	public static final String NOZZLE_FOUR_READING= "nozzleFourReading";
+	public static final String MALE= "MALE";
+	public static final String FEMALE= "FEMALE";
 	
 	
 	

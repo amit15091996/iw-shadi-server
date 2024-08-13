@@ -65,7 +65,7 @@ public class ShadiConfiguration {
 	@Bean
 	 CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://fino-client.vercel.app/")); // Allow requests from all origins
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://fino-client.vercel.app/","http://localhost:3000/")); // Allow requests from all origins
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed HTTP																				// methods
 		configuration.setAllowedHeaders(Arrays.asList("*")); // Allowed
 		configuration.setAllowCredentials(true);
@@ -80,7 +80,7 @@ public class ShadiConfiguration {
 	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 	        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 	            .requestMatchers("/api/v1/admin/**").authenticated()
-	            .requestMatchers("/fino/system/user/**").authenticated()
+	            .requestMatchers("/api/v1/user/**").authenticated()
 	            .requestMatchers("/fino/system/fuel-report/**").authenticated()
 	            .requestMatchers("/api/v1/auth/**").permitAll()
 	        )

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
@@ -19,12 +21,13 @@ import com.shadi.expection.InternalServerError;
 import com.shadi.expection.NotFoundException;
 import com.shadi.utils.AppConstants;
 import com.shadi.utils.ConstantValues;
+import com.shadi.utils.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(GenericException.class)
-	public ResponseEntity<ProblemDetail> handleGenericException(GenericException exception){
+	public ResponseEntity<ProblemDetail> handleGenericException(GenericException exception) {
 		ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 		problemDetail.setProperty(ConstantValues.MESSAGE, exception.getMessage());
 		problemDetail.setProperty(ConstantValues.STATUS, ConstantValues.ERROR_MESSAGE);
@@ -32,8 +35,7 @@ public class GlobalExceptionHandler {
 		problemDetail.setType(ConstantValues.ERROR_MESSAGE_URL);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
 	}
-	
-	
+
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<Map<Object, Object>> noDataAvailable(NotFoundException notFoundException,
 			WebRequest request) {
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.ok(notFound);
 
 	}
-	
+
 	@ExceptionHandler(InternalServerError.class)
 	public ResponseEntity<Map<Object, Object>> internalServerError(InternalServerError internalServerError,
 			WebRequest request) {
@@ -68,11 +70,17 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.ok(internalServerErrorMap);
 
 	}
-	
-	 @ExceptionHandler(AccessDeniedException.class)
-	    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-	        // Handle access denied exception
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	                             .body(Collections.singletonMap("error", "Access Denied"));
-	    }
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+		// Handle access denied exception
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap("error", "Access Denied"));
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public ErrorResponse handleException(Exception e) {
+		return new ErrorResponse("An unexpected error occurred.", e.getMessage());
+	}
 }

@@ -89,6 +89,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 
 			}else {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				
+				System.out.println("un auth---------------");
 				CustomException authorisedExe = new CustomException(AppConstants.Unauthorized, AppConstants.Unauthorized_desc,
 						LocalDateTime.now(), "Token is null",request.getServletPath());
 						errorMap.put(AppConstants.statusCode, authorisedExe.getStatusCode());
