@@ -27,7 +27,6 @@ public class ViewAllServiceImpl implements ViewAllService {
     @Autowired
     private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
-    @Override
     public Map<String, Object> viewAll(String gender, int page, int size, String sortBy) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -36,11 +35,19 @@ public class ViewAllServiceImpl implements ViewAllService {
             Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
             Page<UserRegistrationProfile> profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
             
-
             List<ProfileRecords> profiles = profilePage.getContent().stream()
-                    .map(user -> new ProfileRecords(user.getMobileNumber(), user.getFirstName(), user.getLastName(),
-                            user.getAge(), user.getLangKnown(), user.getReligion(), user.getCommunity(),
-                            user.getGender(), user.getDob(), user.getResidence()))
+                    .map(user -> new ProfileRecords(
+                            user.getMobileNumber(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getAge(),
+                            user.getGender(), // Ensure this is a String
+                            String.join(", ", user.getLangKnown()), // Convert List<String> to String
+                            user.getReligion(),
+                            user.getCommunity(),
+                            user.getDob(),
+                            user.getResidence()
+                    ))
                     .collect(Collectors.toList());
 
             map.put("result", profiles);
@@ -54,6 +61,7 @@ public class ViewAllServiceImpl implements ViewAllService {
         }
         return map;
     }
+
 
     private String getOppositeGender(String gender) {
         if (AppConstants.MALE.equalsIgnoreCase(gender)) {

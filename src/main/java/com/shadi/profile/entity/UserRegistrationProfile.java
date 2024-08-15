@@ -10,9 +10,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.shadi.utils.StringListConverter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -30,8 +32,6 @@ import lombok.Setter;
 @Entity
 public class UserRegistrationProfile implements UserDetails {
 
-	
-	
 	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(unique = true)
@@ -40,8 +40,9 @@ public class UserRegistrationProfile implements UserDetails {
 	private String lastName;
 	private int age;
 	private String gender;
-	@Column(columnDefinition = "LONGTEXT")
-	private String langKnown;
+	@Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "LONGTEXT")
+    private List<String> langKnown; // Store as List<String>
 	@Column(nullable = false)
 	private String password;
 	private String religion;
@@ -55,9 +56,10 @@ public class UserRegistrationProfile implements UserDetails {
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")
 	private byte[] profileImage;
-	@OneToMany(fetch = FetchType.EAGER,mappedBy = "userRegistrationProfile",cascade = CascadeType.ALL,orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "userRegistrationProfile", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<UserRoles> userRole;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -70,6 +72,7 @@ public class UserRegistrationProfile implements UserDetails {
 		// TODO Auto-generated method stub
 		return this.mobileNumber;
 	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
@@ -94,5 +97,4 @@ public class UserRegistrationProfile implements UserDetails {
 		return UserDetails.super.isEnabled();
 	}
 
-	
 }

@@ -79,10 +79,9 @@ public class ShadiConfiguration {
 	    http.csrf(csrf -> csrf.disable())
 	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 	        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-	            .requestMatchers("/api/v1/admin/**").authenticated()
-	            .requestMatchers("/api/v1/user/**").authenticated()
-	            .requestMatchers("/fino/system/fuel-report/**").authenticated()
-	            .requestMatchers("/api/v1/auth/**").permitAll()
+//	            .requestMatchers("/api/v1/admin/**").authenticated()
+//	            .requestMatchers("/api/v1/user/**").authenticated()
+	            .requestMatchers("/api/v1/auth/**","/api/v1/user/**").permitAll()
 	        )
 	        .exceptionHandling(ex -> ex
 	            .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)

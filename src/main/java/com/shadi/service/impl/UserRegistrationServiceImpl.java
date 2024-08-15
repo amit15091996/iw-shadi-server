@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadi.config.JwtHelpers;
@@ -36,46 +35,48 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	@Autowired
 	private JwtHelpers jwtHelpers;
 
-	@Override
-	@Transactional
 	public Map<String, Object> createProfile(UserRegistrationProfileDto dto) {
-		Map<String, Object> map = new HashMap<>();
-		var roles = new UserRoles();
-		try {
-			// Check if a profile with the same mobileNumber already exists
-			if (profileRegistrationRepo.existsById(dto.getMobileNumber())) {
-				throw new GenericException("Profile with mobile number " + dto.getMobileNumber() + " already exists.");
-			}
+	    Map<String, Object> map = new HashMap<>();
+	    try {
+	        if (profileRegistrationRepo.existsById(dto.getMobileNumber())) {
+	            throw new GenericException("Profile with mobile number " + dto.getMobileNumber() + " already exists.");
+	        }
 
-			var userRegistrationProfile = new UserRegistrationProfile();
-			userRegistrationProfile.setMobileNumber(dto.getMobileNumber());
-			userRegistrationProfile.setFirstName(dto.getFirstName());
-			userRegistrationProfile.setLastName(dto.getLastName());
-			userRegistrationProfile.setAge(dto.getAge());
-			userRegistrationProfile.setGender(dto.getGender());
-			userRegistrationProfile.setLangKnown(mapper.writeValueAsString(dto.getLangKnown()));
-			userRegistrationProfile.setPassword(passwordEncoder.encode(dto.getPassword()));
-			userRegistrationProfile.setConfirmPassword(passwordEncoder.encode(dto.getConfirmPassword()));
-			userRegistrationProfile.setCommunity(dto.getCommunity());
-			userRegistrationProfile.setDob(dto.getDob());
-			userRegistrationProfile.setCreatedTime(LocalDateTime.now());
-			userRegistrationProfile.setProfileImage(dto.getProfileImage().getBytes());
-			userRegistrationProfile.setExtension(dto.getProfileImage().getOriginalFilename());
-			roles.setRole("USER");
-			userRegistrationProfile.setUserRole(Arrays.asList(roles));
-			roles.setUserRegistrationProfile(userRegistrationProfile);
-			profileRegistrationRepo.save(userRegistrationProfile);
+	        var userRegistrationProfile = new UserRegistrationProfile();
+	        userRegistrationProfile.setMobileNumber(dto.getMobileNumber());
+	        userRegistrationProfile.setFirstName(dto.getFirstName());
+	        userRegistrationProfile.setLastName(dto.getLastName());
+	        userRegistrationProfile.setAge(dto.getAge());
+	        userRegistrationProfile.setGender(dto.getGender());
+	        userRegistrationProfile.setLangKnown(dto.getLangKnown()); // Directly use List<String>
+	        userRegistrationProfile.setPassword(passwordEncoder.encode(dto.getPassword()));
+	        userRegistrationProfile.setConfirmPassword(passwordEncoder.encode(dto.getConfirmPassword()));
+	        userRegistrationProfile.setCommunity(dto.getCommunity());
+	        userRegistrationProfile.setResidence(dto.getResidence());
+	        userRegistrationProfile.setReligion(dto.getReligion());
+	        userRegistrationProfile.setDob(dto.getDob());
+	        userRegistrationProfile.setCreatedTime(LocalDateTime.now());
 
-			map.put("message", "Profile created successfully");
-			// Optionally, you can also add userRegistrationProfile to map if needed
-			// map.put("profileDetails", userRegistrationProfile);
-		} catch (Exception e) {
-			map.put("message", "Profile creation failed");
-			map.put("error", e.getMessage()); // Add error message for better logging
-			
-		}
-		return map;
+	        if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
+	            userRegistrationProfile.setProfileImage(dto.getProfileImage().getBytes());
+	            userRegistrationProfile.setExtension(dto.getProfileImage().getOriginalFilename());
+	        }
+
+	        var roles = new UserRoles();
+	        roles.setRole("USER");
+	        userRegistrationProfile.setUserRole(Arrays.asList(roles));
+	        roles.setUserRegistrationProfile(userRegistrationProfile);
+	        
+	        profileRegistrationRepo.save(userRegistrationProfile);
+	        map.put("message", "Profile created successfully");
+	    } catch (Exception e) {
+	        map.put("message", "Profile creation failed");
+	        map.put("error", e.getMessage()); // Add error message for better logging
+	    }
+	    return map;
 	}
+
+
 
 	@Override
 	public Map<String, Object> userLogin(String mobileNumber, String password) {
