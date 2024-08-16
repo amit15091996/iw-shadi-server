@@ -81,7 +81,7 @@ public class ShadiConfiguration {
 	        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 //	            .requestMatchers("/api/v1/admin/**").authenticated()
 //	            .requestMatchers("/api/v1/user/**").authenticated()
-	            .requestMatchers("/api/v1/auth/**","/api/v1/user/**").permitAll()
+	            .requestMatchers("/api/v1/auth/**","/api/v1/user/**","/api/v1/admin/**").permitAll()
 	        )
 	        .exceptionHandling(ex -> ex
 	            .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)

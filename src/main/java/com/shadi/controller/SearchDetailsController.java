@@ -26,6 +26,7 @@ public class SearchDetailsController {
 	public ResponseEntity<Map<String, Object>> insertSearchDetails(@RequestBody SearchDetails searchDetails) {
 		Map<String, Object> map = new HashMap<>();
 		try {
+			System.out.println("insert data");
 			map = searchDetailsService.addSearchDetails(searchDetails);
 		} catch (Exception e) {
 			throw new GenericException(e);
@@ -37,6 +38,7 @@ public class SearchDetailsController {
 	public ResponseEntity<Map<String, Object>> getAllSearchDetails() {
 		Map<String, Object> map = new HashMap<>();
 		try {
+			System.out.println("get data");
 			map = searchDetailsService.getSearchDetails();
 		} catch (Exception e) {
 			throw new GenericException(e);

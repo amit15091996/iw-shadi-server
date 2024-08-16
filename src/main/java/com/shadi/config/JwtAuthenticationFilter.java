@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private UserService userService;
 	@Autowired
 	private JwtHelpers jwtHelpers;
-	private List<String> skipUrls = Arrays.asList("/api/v1/auth/**");
+	private List<String> skipUrls = Arrays.asList("/api/v1/auth/**","/api/v1/user/**","/api/v1/admin/**");
 	
 	
 	@SuppressWarnings("null")
