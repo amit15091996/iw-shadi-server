@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shadi.expection.CustomException;
+import com.shadi.exception.CustomException;
 import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.service.UserService;
 import com.shadi.utils.AppConstants;
@@ -38,10 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private UserService userService;
 	@Autowired
 	private JwtHelpers jwtHelpers;
-	private List<String> skipUrls = Arrays.asList("/api/v1/auth/**","/api/v1/user/**","/api/v1/admin/**");
+//	private List<String> skipUrls = Arrays.asList("/api/v1/auth/**","/api/v1/user/**","/api/v1/admin/**","/api/**");
+	private List<String> skipUrls = Arrays.asList("/api/**");
 	
 	
-	@SuppressWarnings("null")
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		

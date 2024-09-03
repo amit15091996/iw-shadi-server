@@ -1,4 +1,4 @@
-package com.shadi.expection.handle;
+package com.shadi.exception.handle;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import com.shadi.expection.AccessDeniedException;
-import com.shadi.expection.CustomException;
-import com.shadi.expection.GenericException;
-import com.shadi.expection.InternalServerError;
-import com.shadi.expection.NotFoundException;
+import com.shadi.exception.AccessDeniedException;
+import com.shadi.exception.CustomException;
+import com.shadi.exception.GenericException;
+import com.shadi.exception.InternalServerError;
+import com.shadi.exception.NotFoundException;
 import com.shadi.utils.AppConstants;
 import com.shadi.utils.ConstantValues;
 import com.shadi.utils.ErrorResponse;

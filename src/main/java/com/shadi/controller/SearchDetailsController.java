@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shadi.entity.SearchDetails;
-import com.shadi.expection.GenericException;
+import com.shadi.exception.GenericException;
 import com.shadi.service.SearchDetailsService;
 
 @RestController

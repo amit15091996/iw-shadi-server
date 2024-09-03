@@ -10,8 +10,9 @@ import com.shadi.profile.entity.UserRegistrationProfile;
 @Repository
 public interface UserProfileRegistrationRepo extends JpaRepository<UserRegistrationProfile, String> {
 
+	Page<UserRegistrationProfile> findAll(Pageable pageable);
+
 	Page<UserRegistrationProfile> findAllByGender(String gender, Pageable pageable);
 
 	UserRegistrationProfile findByMobileNumber(String mobileNumber);
-
 }

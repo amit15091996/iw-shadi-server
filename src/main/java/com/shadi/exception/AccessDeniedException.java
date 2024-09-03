@@ -1,4 +1,4 @@
-package com.shadi.expection;
+package com.shadi.exception;
 
 public class AccessDeniedException extends RuntimeException {
 

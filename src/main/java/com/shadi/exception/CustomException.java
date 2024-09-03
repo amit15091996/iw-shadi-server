@@ -1,4 +1,4 @@
-package com.shadi.expection;
+package com.shadi.exception;
 
 import java.time.LocalDateTime;
 

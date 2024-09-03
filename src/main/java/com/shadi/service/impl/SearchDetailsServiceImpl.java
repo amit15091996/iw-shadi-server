@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shadi.entity.SearchDetails;
-import com.shadi.expection.GenericException;
+import com.shadi.exception.GenericException;
 import com.shadi.repo.SearchDetailsRepo;
 import com.shadi.service.SearchDetailsService;
 

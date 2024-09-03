@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadi.config.JwtHelpers;
-import com.shadi.expection.GenericException;
-import com.shadi.expection.InternalServerError;
+import com.shadi.exception.GenericException;
+import com.shadi.exception.InternalServerError;
 import com.shadi.profile.dto.UserRegistrationProfileDto;
 import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.profile.entity.UserRoles;
@@ -69,6 +70,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
 			profileRegistrationRepo.save(userRegistrationProfile);
 			map.put("message", "Profile created successfully");
+			map.put("status", HttpStatus.OK.value());
 		} catch (Exception e) {
 			map.put("message", "Profile creation failed");
 			System.out.println(e); // Add error message for better logging
@@ -98,7 +100,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 				userLoginMap.put(AppConstants.statusMessage, AppConstants.userLoggedInSuccesfully);
 				return userLoginMap;
 			} else {
-				throw new com.shadi.expection.NotFoundException(
+				throw new com.shadi.exception.NotFoundException(
 						"Sorry No user found with the given mobile number : " + mobileNumber);
 			}
 		} catch (Exception e) {

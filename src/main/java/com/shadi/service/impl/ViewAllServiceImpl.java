@@ -30,11 +30,18 @@ public class ViewAllServiceImpl implements ViewAllService {
     public Map<String, Object> viewAll(String gender, int page, int size, String sortBy) {
         Map<String, Object> map = new HashMap<>();
         try {
-            String oppositeGender = getOppositeGender(gender);
-
             Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-            Page<UserRegistrationProfile> profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
+            Page<UserRegistrationProfile> profilePage;
             
+            profilePage = userProfileRegistrationRepo.findAll(pageable);
+//            if (gender == null || gender.trim().isEmpty()) {
+//                // Fetch all profiles if gender is null
+//            } else {
+//                // Fetch profiles based on opposite gender
+//                String oppositeGender = getOppositeGender(gender);
+//                profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
+//            }
+//            
             List<ProfileRecords> profiles = profilePage.getContent().stream()
                     .map(user -> new ProfileRecords(
                             user.getMobileNumber(),
@@ -61,6 +68,7 @@ public class ViewAllServiceImpl implements ViewAllService {
         }
         return map;
     }
+
 
 
     private String getOppositeGender(String gender) {
