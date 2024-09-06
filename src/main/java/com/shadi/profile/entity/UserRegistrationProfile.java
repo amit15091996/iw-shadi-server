@@ -10,6 +10,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.shadi.entity.UserFamilyDetails;
+import com.shadi.entity.UserLifeStyleAndEducation;
+import com.shadi.entity.UserPartnerPreferences;
+import com.shadi.entity.UserPersonalDetails;
 import com.shadi.utils.StringListConverter;
 
 import jakarta.persistence.CascadeType;
@@ -20,6 +24,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +46,8 @@ public class UserRegistrationProfile implements UserDetails {
 	private int age;
 	private String gender;
 	@Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "LONGTEXT")
-    private List<String> langKnown; // Store as List<String>
+	@Column(columnDefinition = "LONGTEXT")
+	private List<String> langKnown; // Store as List<String>
 	@Column(nullable = false)
 	private String password;
 	private String religion;
@@ -59,6 +64,21 @@ public class UserRegistrationProfile implements UserDetails {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "userRegistrationProfile", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<UserRoles> userRole;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "userRegistrationProfile")
+	@JsonManagedReference
+	private UserFamilyDetails userFamilyDetails;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "userRegistrationProfile")
+	@JsonManagedReference
+	private UserLifeStyleAndEducation userLifeStyleAndEducation;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "userRegistrationProfile")
+	@JsonManagedReference
+	private UserPersonalDetails userPersonalDetails;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "userRegistrationProfile")
+	@JsonManagedReference
+	private UserPartnerPreferences userPartnerPreferences;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadi.config.JwtHelpers;
 import com.shadi.exception.GenericException;
 import com.shadi.exception.InternalServerError;
@@ -28,7 +27,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	@Autowired
 	private UserProfileRegistrationRepo profileRegistrationRepo;
 
-	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;

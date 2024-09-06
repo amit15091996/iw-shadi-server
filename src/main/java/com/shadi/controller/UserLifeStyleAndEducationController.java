@@ -20,10 +20,10 @@ public class UserLifeStyleAndEducationController {
 
 	@PostMapping("/save-user-life-style")
 	public ResponseEntity<Map<String, Object>> saveUserLifeStyleAndEducationDetails(
-			@RequestBody UserLifeStyleAndEducation userLifeStyleAndEducation) {
+			@RequestBody UserLifeStyleAndEducation userLifeStyleAndEducation, @RequestParam String mobileNumber) {
 		try {
 			Map<String, Object> response = userLifeStyleAndEducationService
-					.saveUserLifeStyleAndEducationDetails(userLifeStyleAndEducation);
+					.saveUserLifeStyleAndEducationDetails(userLifeStyleAndEducation, mobileNumber);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (GenericException e) {
 			return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

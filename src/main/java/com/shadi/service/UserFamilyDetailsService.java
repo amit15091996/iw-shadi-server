@@ -6,7 +6,7 @@ import com.shadi.entity.UserFamilyDetails;
 
 public interface UserFamilyDetailsService {
 
-	public Map<String, Object> saveUserFamilylDetails(UserFamilyDetails userFamilyDetails);
+	public Map<String, Object> saveUserFamilylDetails(UserFamilyDetails userFamilyDetails,String mobileNumber);
 
 	Map<String, Object> getUserFamilylDetails(int page, int size);
 

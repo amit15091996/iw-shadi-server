@@ -54,4 +54,10 @@ public class ViewProfilesController {
 		}
 	}
 
+	@GetMapping("/get-user-all-details")
+	public ResponseEntity<?> getAllUserDetails(@RequestParam String mobileNumber) {
+
+		return ResponseEntity.ok(this.viewAllService.getAllUserDetails(mobileNumber));
+	}
+
 }

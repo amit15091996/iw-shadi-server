@@ -2,10 +2,15 @@ package com.shadi.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.shadi.profile.entity.UserRegistrationProfile;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.TableGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +31,7 @@ public class UserPartnerPreferences {
 	private List<String> preferredLocation;
 	private String desiredJobValue;
 	private String anyOtherPreferences;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	private UserRegistrationProfile userRegistrationProfile;
 }

@@ -53,9 +53,9 @@ public class UserFamilyDetailsController {
 
 	@PostMapping("/save-user-family-details")
 	public ResponseEntity<Map<String, Object>> saveUserFamilylDetails(
-			@RequestBody UserFamilyDetails userFamilyDetails) {
+			@RequestBody UserFamilyDetails userFamilyDetails, @RequestParam String mobileNumber) {
 		try {
-			Map<String, Object> response = userFamilyDetailsService.saveUserFamilylDetails(userFamilyDetails);
+			Map<String, Object> response = userFamilyDetailsService.saveUserFamilylDetails(userFamilyDetails,mobileNumber);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(Map.of("error", "Error while saving user family details"),

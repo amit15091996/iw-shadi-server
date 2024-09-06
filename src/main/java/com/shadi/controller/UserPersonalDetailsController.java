@@ -19,9 +19,9 @@ public class UserPersonalDetailsController {
 
 	@PostMapping("/save-user-personal-details")
 	public ResponseEntity<Map<String, Object>> saveUserPersonalDetails(
-			@RequestBody UserPersonalDetails userPersonalDetails) {
+			@RequestBody UserPersonalDetails userPersonalDetails, @RequestParam String mobileNumber) {
 		try {
-			Map<String, Object> response = userPersonalDetailsService.saveUserPersonalDetails(userPersonalDetails);
+			Map<String, Object> response = userPersonalDetailsService.saveUserPersonalDetails(userPersonalDetails,mobileNumber);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (GenericException e) {
 			return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

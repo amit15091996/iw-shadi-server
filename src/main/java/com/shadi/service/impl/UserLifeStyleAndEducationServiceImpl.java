@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.shadi.entity.UserLifeStyleAndEducation;
 import com.shadi.exception.GenericException;
+import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.repo.UserLifeStyleAndEducationRepo;
+import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.UserLifeStyleAndEducationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 public class UserLifeStyleAndEducationServiceImpl implements UserLifeStyleAndEducationService {
 	@Autowired
 	private UserLifeStyleAndEducationRepo userLifeStyleAndEducationRepo;
+	@Autowired
+	private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
 	@Override
 	public Map<String, Object> saveUserLifeStyleAndEducationDetails(
-			UserLifeStyleAndEducation userLifeStyleAndEducation) {
+			UserLifeStyleAndEducation userLifeStyleAndEducation,String mobileNumber) {
 		Map<String, Object> map = new HashMap<>();
+		UserRegistrationProfile findByMobileNumber = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 		try {
 			userLifeStyleAndEducation.setDiet(userLifeStyleAndEducation.getDiet());
 			userLifeStyleAndEducation.setDrinking(userLifeStyleAndEducation.getDrinking());
@@ -36,6 +41,7 @@ public class UserLifeStyleAndEducationServiceImpl implements UserLifeStyleAndEdu
 			userLifeStyleAndEducation.setSmoking(userLifeStyleAndEducation.getSmoking());
 			userLifeStyleAndEducation.setUserCurrentLoc(userLifeStyleAndEducation.getUserCurrentLoc());
 			userLifeStyleAndEducation.setUserOccupation(userLifeStyleAndEducation.getUserOccupation());
+			userLifeStyleAndEducation.setUserRegistrationProfile(findByMobileNumber);
 			UserLifeStyleAndEducation details = userLifeStyleAndEducationRepo.save(userLifeStyleAndEducation);
 			map.put("userLifeStyleAndEducation", details);
 			map.put("status", HttpStatus.OK.value());

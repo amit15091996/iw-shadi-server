@@ -13,5 +13,6 @@ public record ProfileRecords(
     String community,
     LocalDate dob,
     String residence
+//    UserFamilyDetails userFamilyDetails
 ) { }
 

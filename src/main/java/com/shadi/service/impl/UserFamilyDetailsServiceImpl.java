@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.shadi.entity.UserFamilyDetails;
 import com.shadi.exception.GenericException;
+import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.repo.UserFamilyDetailsRepo;
+import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.UserFamilyDetailsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,27 +27,35 @@ public class UserFamilyDetailsServiceImpl implements UserFamilyDetailsService {
 
 	@Autowired
 	private UserFamilyDetailsRepo userFamilyDetailsRepo;
+	@Autowired
+	private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
 	@Override
-	public Map<String, Object> saveUserFamilylDetails(UserFamilyDetails userFamilyDetails) {
+	public Map<String, Object> saveUserFamilylDetails(UserFamilyDetails userFamilyDetails, String mobileNumber) {
 		Map<String, Object> map = new HashMap<>();
+		UserRegistrationProfile findByMobileNumber = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 		try {
-			userFamilyDetails.setFamilyDetails(userFamilyDetails.getFamilyDetails());
-			userFamilyDetails.setFamilyStatus(userFamilyDetails.getFamilyDetails());
-			userFamilyDetails.setFamilyValue(userFamilyDetails.getFamilyValue());
-			userFamilyDetails.setFatherName(userFamilyDetails.getFatherName());
-			userFamilyDetails.setFatherOccupation(userFamilyDetails.getFatherOccupation());
-			userFamilyDetails.setMotherName(userFamilyDetails.getMotherName());
-			userFamilyDetails.setMotherOccupation(userFamilyDetails.getMotherOccupation());
-			userFamilyDetails.setMaternalGotra(userFamilyDetails.getMaternalGotra());
-			userFamilyDetails.setNoOfBrothers(userFamilyDetails.getNoOfBrothers());
-			userFamilyDetails.setNoOfBrothersMarried(userFamilyDetails.getNoOfBrothersMarried());
-			userFamilyDetails.setNoOfSisters(userFamilyDetails.getNoOfSisters());
-			userFamilyDetails.setNoOfSistersMarried(userFamilyDetails.getNoOfSistersMarried());
-			userFamilyDetails.setNoOfFamilyMembers(userFamilyDetails.getNoOfFamilyMembers());
-			UserFamilyDetails details = userFamilyDetailsRepo.save(userFamilyDetails);
-			map.put("UserFamilyDetails", details);
-			map.put("status", HttpStatus.OK.value());
+			if (findByMobileNumber == null) {
+				throw new GenericException("Profile Not Avaliable with mobile number :" + mobileNumber);
+			} else {
+				userFamilyDetails.setFamilyDetails(userFamilyDetails.getFamilyDetails());
+				userFamilyDetails.setFamilyStatus(userFamilyDetails.getFamilyDetails());
+				userFamilyDetails.setFamilyValue(userFamilyDetails.getFamilyValue());
+				userFamilyDetails.setFatherName(userFamilyDetails.getFatherName());
+				userFamilyDetails.setFatherOccupation(userFamilyDetails.getFatherOccupation());
+				userFamilyDetails.setMotherName(userFamilyDetails.getMotherName());
+				userFamilyDetails.setMotherOccupation(userFamilyDetails.getMotherOccupation());
+				userFamilyDetails.setMaternalGotra(userFamilyDetails.getMaternalGotra());
+				userFamilyDetails.setNoOfBrothers(userFamilyDetails.getNoOfBrothers());
+				userFamilyDetails.setNoOfBrothersMarried(userFamilyDetails.getNoOfBrothersMarried());
+				userFamilyDetails.setNoOfSisters(userFamilyDetails.getNoOfSisters());
+				userFamilyDetails.setNoOfSistersMarried(userFamilyDetails.getNoOfSistersMarried());
+				userFamilyDetails.setNoOfFamilyMembers(userFamilyDetails.getNoOfFamilyMembers());
+				userFamilyDetails.setUserRegistrationProfile(findByMobileNumber);
+				UserFamilyDetails details = userFamilyDetailsRepo.save(userFamilyDetails);
+				map.put("UserFamilyDetails", details);
+				map.put("status", HttpStatus.OK.value());
+			}
 		} catch (Exception e) {
 			log.error("Exception in userFamilylDetails  " + e.getMessage(), e);
 			throw new GenericException("Error While Saving Details");

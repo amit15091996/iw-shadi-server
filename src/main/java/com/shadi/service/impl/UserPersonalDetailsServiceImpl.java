@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.shadi.entity.UserPersonalDetails;
 import com.shadi.exception.GenericException;
+import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.repo.UserPersonalDetailsRepo;
+import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.UserPersonalDetailsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +27,13 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 
 	@Autowired
 	private UserPersonalDetailsRepo userPersonalDetailsRepo;
+	@Autowired
+	private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
 	@Override
-	public Map<String, Object> saveUserPersonalDetails(UserPersonalDetails userPersonalDetails) {
+	public Map<String, Object> saveUserPersonalDetails(UserPersonalDetails userPersonalDetails,String mobileNumber) {
 		Map<String, Object> map = new HashMap<>();
+		UserRegistrationProfile findByMobileNumber = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 		try {
 			userPersonalDetails.setBirthPlace(userPersonalDetails.getBirthPlace());
 			userPersonalDetails.setBloodGroup(userPersonalDetails.getBloodGroup());
@@ -44,6 +49,7 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 			userPersonalDetails.setUserHeight(userPersonalDetails.getUserHeight());
 			userPersonalDetails.setUserIncome(userPersonalDetails.getUserIncome());
 			userPersonalDetails.setUserWeight(userPersonalDetails.getUserWeight());
+			userPersonalDetails.setUserRegistrationProfile(findByMobileNumber);
 			UserPersonalDetails details = userPersonalDetailsRepo.save(userPersonalDetails);
 			map.put("UserPersonalDetails", details);
 			map.put("status", HttpStatus.OK.value());

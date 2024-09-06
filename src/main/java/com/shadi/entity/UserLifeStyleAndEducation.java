@@ -1,9 +1,14 @@
 package com.shadi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.shadi.profile.entity.UserRegistrationProfile;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.TableGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +29,8 @@ public class UserLifeStyleAndEducation {
 	private String drinking;
 	private String smoking;
 	private String diet;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	private UserRegistrationProfile userRegistrationProfile;
 }
