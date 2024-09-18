@@ -112,13 +112,16 @@ public class UserFamilyDetailsServiceImpl implements UserFamilyDetailsService {
 	}
 
 	@Override
-	public Map<String, Object> updateUserFamilylDetails(Long id, UserFamilyDetails updatedDetails) {
+	public Map<String, Object> updateUserFamilylDetails(String mobileNumber, UserFamilyDetails updatedDetails) {
 		Map<String, Object> map = new HashMap<>();
 		try {
-			Optional<UserFamilyDetails> existingDetailsOpt = userFamilyDetailsRepo.findById(id);
+			UserRegistrationProfile existingProfile = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
+			if (existingProfile == null) {
+				throw new GenericException("Profile with mobile number " + mobileNumber + " not found.");
+			}
 
-			if (existingDetailsOpt.isPresent()) {
-				UserFamilyDetails existingDetails = existingDetailsOpt.get();
+			UserFamilyDetails existingDetails = existingProfile.getUserFamilyDetails();
+			if (existingDetails != null) {
 
 				existingDetails.setFamilyDetails(updatedDetails.getFamilyDetails());
 				existingDetails.setFamilyStatus(updatedDetails.getFamilyStatus());
@@ -138,7 +141,7 @@ public class UserFamilyDetailsServiceImpl implements UserFamilyDetailsService {
 				map.put("UserFamilyDetails", savedDetails);
 				map.put("status", HttpStatus.OK.value());
 			} else {
-				map.put("Error", "UserFamilyDetails not found with ID: " + id);
+				map.put("Error", "UserFamilyDetails not found with mobileNumber: " + mobileNumber);
 				map.put("status", HttpStatus.NOT_FOUND.value());
 			}
 		} catch (Exception e) {

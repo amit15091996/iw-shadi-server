@@ -52,11 +52,11 @@ public class UserLifeStyleAndEducationController {
 		}
 	}
 
-	@PutMapping("/update-user-life-style-details/{id}")
-	public ResponseEntity<Map<String, Object>> updateUserLifeStyleAndEducationDetails(@PathVariable Long id,
+	@PutMapping("/update-user-life-style-details/{mobileNumber}")
+	public ResponseEntity<Map<String, Object>> updateUserLifeStyleAndEducationDetails(@PathVariable String mobileNumber,
 			@RequestBody UserLifeStyleAndEducation updatedDetails) {
 		try {
-			Map<String, Object> response = userLifeStyleAndEducationService.updateUserLifeStyleAndEducationDetails(id,
+			Map<String, Object> response = userLifeStyleAndEducationService.updateUserLifeStyleAndEducationDetails(mobileNumber,
 					updatedDetails);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (GenericException e) {

@@ -63,11 +63,11 @@ public class UserFamilyDetailsController {
 		}
 	}
 
-	@PutMapping("/update-user-family-details/{id}")
-	public ResponseEntity<Map<String, Object>> updateUserFamilylDetails(@PathVariable("id") Long id,
+	@PutMapping("/update-user-family-details/{mobileNumber}")
+	public ResponseEntity<Map<String, Object>> updateUserFamilylDetails(@PathVariable String mobileNumber,
 			@RequestBody UserFamilyDetails updatedDetails) {
 		try {
-			Map<String, Object> response = userFamilyDetailsService.updateUserFamilylDetails(id, updatedDetails);
+			Map<String, Object> response = userFamilyDetailsService.updateUserFamilylDetails(mobileNumber, updatedDetails);
 			if (response.containsKey("Error")) {
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}

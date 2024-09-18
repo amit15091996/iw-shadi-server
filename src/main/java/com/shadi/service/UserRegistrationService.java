@@ -9,4 +9,6 @@ public interface UserRegistrationService {
 	public Map<String, Object> createProfile(UserRegistrationProfileDto dto);
 	
 	public Map<String, Object> userLogin(String mobileNumber, String password);
+	
+	public Map<String, Object> updateProfile(UserRegistrationProfileDto dto);
 }

@@ -12,6 +12,6 @@ public interface UserFamilyDetailsService {
 
 	public Map<String, Object> getUserFamilylDetailsById(Long userFamilyId);
 
-	public Map<String, Object> updateUserFamilylDetails(Long id, UserFamilyDetails updatedDetails);
+	public Map<String, Object> updateUserFamilylDetails(String mobileNumber, UserFamilyDetails updatedDetails);
 
 }

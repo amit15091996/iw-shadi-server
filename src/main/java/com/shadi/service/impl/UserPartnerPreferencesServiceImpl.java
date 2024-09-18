@@ -106,12 +106,15 @@ public class UserPartnerPreferencesServiceImpl implements UserPartnerPreferences
 	}
 
 	@Override
-	public Map<String, Object> updateUserPartnerPreferences(Long id, UserPartnerPreferences userPartnerPreferences) {
+	public Map<String, Object> updateUserPartnerPreferences(String mobileNumber, UserPartnerPreferences userPartnerPreferences) {
 		Map<String, Object> map = new HashMap<>();
 		try {
-			Optional<UserPartnerPreferences> existingDetailsOpt = userPartnerPreferencesRepo.findById(id);
-			if (existingDetailsOpt.isPresent()) {
-				UserPartnerPreferences existingDetails = existingDetailsOpt.get();
+			UserRegistrationProfile existingProfile = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
+			if (existingProfile == null) {
+				throw new GenericException("Profile with mobile number " + mobileNumber + " not found.");
+			}
+			UserPartnerPreferences existingDetails =  existingProfile.getUserPartnerPreferences();
+			if (existingDetails != null) {
 
 				existingDetails.setPreferredLocation(userPartnerPreferences.getPreferredLocation());
 				existingDetails.setAnyOtherPreferences(userPartnerPreferences.getAnyOtherPreferences());
@@ -123,7 +126,7 @@ public class UserPartnerPreferencesServiceImpl implements UserPartnerPreferences
 				map.put("UserPartnerPreferences", savedDetails);
 				map.put("status", HttpStatus.OK.value());
 			} else {
-				map.put("Error", "UserPartnerPreferences not found with ID: " + id);
+				map.put("Error", "UserPartnerPreferences not found with mobileNumber: " + mobileNumber);
 				map.put("status", HttpStatus.NOT_FOUND.value());
 			}
 		} catch (Exception e) {

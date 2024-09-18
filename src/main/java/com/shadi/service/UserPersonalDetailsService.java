@@ -12,5 +12,5 @@ public interface UserPersonalDetailsService {
 
 	public Map<String, Object> getUserPersonalDetailsById(Long userPersonalId);
 
-	public Map<String, Object> updateUserPersonalDetails(UserPersonalDetails userPersonalDetails);
+	public Map<String, Object> updateUserPersonalDetails(UserPersonalDetails userPersonalDetails, String mobileNumber);
 }

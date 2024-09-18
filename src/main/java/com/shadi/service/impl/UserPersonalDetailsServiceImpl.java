@@ -19,6 +19,7 @@ import com.shadi.repo.UserPersonalDetailsRepo;
 import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.UserPersonalDetailsService;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 	private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
 	@Override
-	public Map<String, Object> saveUserPersonalDetails(UserPersonalDetails userPersonalDetails,String mobileNumber) {
+	public Map<String, Object> saveUserPersonalDetails(UserPersonalDetails userPersonalDetails, String mobileNumber) {
 		Map<String, Object> map = new HashMap<>();
 		UserRegistrationProfile findByMobileNumber = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 		try {
@@ -53,10 +54,10 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 			UserPersonalDetails details = userPersonalDetailsRepo.save(userPersonalDetails);
 			map.put("UserPersonalDetails", details);
 			map.put("status", HttpStatus.OK.value());
-			log.info("UserPersonalDetails saved for UserPersonalId : "+ userPersonalDetails.getUserPersonalId());
+			log.info("UserPersonalDetails saved for UserPersonalId : " + userPersonalDetails.getUserPersonalId());
 
 		} catch (Exception e) {
-			log.error("Exception in userFamilylDetails  " + e.getMessage(),e);
+			log.error("Exception in userFamilylDetails  " + e.getMessage(), e);
 			throw new GenericException("Error While Saving Details");
 		}
 		return map;
@@ -76,7 +77,7 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 			} else {
 				map.put("UserPersonalDetails", findAll.getContent());
 				map.put("status", HttpStatus.NOT_FOUND.value());
-				log.info("UserPersonalDetails  : "+ findAll.getContent());
+				log.info("UserPersonalDetails  : " + findAll.getContent());
 			}
 			map.put("totalPages", findAll.getTotalPages());
 			map.put("totalElements", findAll.getTotalElements());
@@ -90,58 +91,70 @@ public class UserPersonalDetailsServiceImpl implements UserPersonalDetailsServic
 	}
 
 	@Override
-    public Map<String, Object> getUserPersonalDetailsById(Long userPersonalId) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            Optional<UserPersonalDetails> details = userPersonalDetailsRepo.findById(userPersonalId);
-            if (details.isPresent()) {
-                map.put("UserPersonalDetails", details.get());
-                map.put("status", HttpStatus.OK.value());
-            } else {
-                map.put("message", "No details found for ID: " + userPersonalId);
-                map.put("status", HttpStatus.NOT_FOUND.value());
-            }
-        } catch (Exception e) {
-            log.error("Exception in getUserPersonalDetailsById: " + e.getMessage(), e);
-            throw new GenericException("Error While Fetching Details by ID");
-        }
-        return map;
-    }
+	public Map<String, Object> getUserPersonalDetailsById(Long userPersonalId) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			Optional<UserPersonalDetails> details = userPersonalDetailsRepo.findById(userPersonalId);
+			if (details.isPresent()) {
+				map.put("UserPersonalDetails", details.get());
+				map.put("status", HttpStatus.OK.value());
+			} else {
+				map.put("message", "No details found for ID: " + userPersonalId);
+				map.put("status", HttpStatus.NOT_FOUND.value());
+			}
+		} catch (Exception e) {
+			log.error("Exception in getUserPersonalDetailsById: " + e.getMessage(), e);
+			throw new GenericException("Error While Fetching Details by ID");
+		}
+		return map;
+	}
 
-	 @Override
-	    public Map<String, Object> updateUserPersonalDetails(UserPersonalDetails userPersonalDetails) {
-	        Map<String, Object> map = new HashMap<>();
-	        try {
-	            Optional<UserPersonalDetails> existingDetailsOpt = userPersonalDetailsRepo.findById(userPersonalDetails.getUserPersonalId());
-	            if (existingDetailsOpt.isPresent()) {
-	                UserPersonalDetails existingDetails = existingDetailsOpt.get();
-	                existingDetails.setBirthPlace(userPersonalDetails.getBirthPlace());
-	                existingDetails.setBloodGroup(userPersonalDetails.getBloodGroup());
-	                existingDetails.setBodyType(userPersonalDetails.getBodyType());
-	                existingDetails.setComplexion(userPersonalDetails.getComplexion());
-	                existingDetails.setGotra(userPersonalDetails.getGotra());
-	                existingDetails.setHobbies(userPersonalDetails.getHobbies());
-	                existingDetails.setIsPersonDisabled(userPersonalDetails.getIsPersonDisabled());
-	                existingDetails.setIsUserStayingAlone(userPersonalDetails.getIsUserStayingAlone());
-	                existingDetails.setManglik(userPersonalDetails.getManglik());
-	                existingDetails.setMaritalStatus(userPersonalDetails.getMaritalStatus());
-	                existingDetails.setRashi(userPersonalDetails.getRashi());
-	                existingDetails.setUserHeight(userPersonalDetails.getUserHeight());
-	                existingDetails.setUserIncome(userPersonalDetails.getUserIncome());
-	                existingDetails.setUserWeight(userPersonalDetails.getUserWeight());
+	@Override
+	@Transactional
+	public Map<String, Object> updateUserPersonalDetails(UserPersonalDetails userPersonalDetails, String mobileNumber) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			// Fetch the profile based on mobile number
+			UserRegistrationProfile existingProfile = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 
-	                UserPersonalDetails updatedDetails = userPersonalDetailsRepo.save(existingDetails);
-	                map.put("UserPersonalDetails", updatedDetails);
-	                map.put("status", HttpStatus.OK.value());
-	            } else {
-	                map.put("message", "No details found for ID: " + userPersonalDetails.getUserPersonalId());
-	                map.put("status", HttpStatus.NOT_FOUND.value());
-	            }
-	        } catch (Exception e) {
-	            log.error("Exception in updateUserPersonalDetails: " + e.getMessage(), e);
-	            throw new GenericException("Error While Updating Details");
-	        }
-	        return map;
-	    }
+			if (existingProfile == null) {
+				throw new GenericException("Profile with mobile number " + mobileNumber + " not found.");
+			}
+
+//	        Optional<UserPersonalDetails> existingDetailsOpt = userPersonalDetailsRepo.findById(userPersonalDetails.getUserPersonalId());
+
+			UserPersonalDetails existingDetails = existingProfile.getUserPersonalDetails();
+			if (existingProfile != null && existingDetails != null) {
+
+				// Update fields
+				existingDetails.setBirthPlace(userPersonalDetails.getBirthPlace());
+				existingDetails.setBloodGroup(userPersonalDetails.getBloodGroup());
+				existingDetails.setBodyType(userPersonalDetails.getBodyType());
+				existingDetails.setComplexion(userPersonalDetails.getComplexion());
+				existingDetails.setGotra(userPersonalDetails.getGotra());
+				existingDetails.setHobbies(userPersonalDetails.getHobbies());
+				existingDetails.setIsPersonDisabled(userPersonalDetails.getIsPersonDisabled());
+				existingDetails.setIsUserStayingAlone(userPersonalDetails.getIsUserStayingAlone());
+				existingDetails.setManglik(userPersonalDetails.getManglik());
+				existingDetails.setMaritalStatus(userPersonalDetails.getMaritalStatus());
+				existingDetails.setRashi(userPersonalDetails.getRashi());
+				existingDetails.setUserHeight(userPersonalDetails.getUserHeight());
+				existingDetails.setUserIncome(userPersonalDetails.getUserIncome());
+				existingDetails.setUserWeight(userPersonalDetails.getUserWeight());
+
+				// Save updated details
+				UserPersonalDetails updatedDetails = userPersonalDetailsRepo.save(existingDetails);
+				map.put("UserPersonalDetails", updatedDetails);
+				map.put("status", HttpStatus.OK.value());
+			} else {
+				map.put("message", "No details found for mobileNumber: " + mobileNumber);
+				map.put("status", HttpStatus.NOT_FOUND.value());
+			}
+		} catch (Exception e) {
+			log.error("Exception in updateUserPersonalDetails: " + e.getMessage(), e);
+			throw new GenericException("Error While Updating Details");
+		}
+		return map;
+	}
 
 }

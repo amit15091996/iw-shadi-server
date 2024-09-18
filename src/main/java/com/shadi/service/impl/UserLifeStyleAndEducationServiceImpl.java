@@ -95,14 +95,17 @@ public class UserLifeStyleAndEducationServiceImpl implements UserLifeStyleAndEdu
 	}
 
 	@Override
-	public Map<String, Object> updateUserLifeStyleAndEducationDetails(Long id,
+	public Map<String, Object> updateUserLifeStyleAndEducationDetails(String mobileNumber,
 			UserLifeStyleAndEducation updatedDetails) {
 		Map<String, Object> map = new HashMap<>();
 		try {
-			Optional<UserLifeStyleAndEducation> existingDetailsOpt = userLifeStyleAndEducationRepo.findById(id);
+			UserRegistrationProfile existingProfile = userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
+			if (existingProfile == null) {
+				throw new GenericException("Profile with mobile number " + mobileNumber + " not found.");
+			}
 
-			if (existingDetailsOpt.isPresent()) {
-				UserLifeStyleAndEducation existingDetails = existingDetailsOpt.get();
+			UserLifeStyleAndEducation existingDetails = existingProfile.getUserLifeStyleAndEducation();
+			if (existingDetails != null) {
 
 				existingDetails.setDiet(updatedDetails.getDiet());
 				existingDetails.setDrinking(updatedDetails.getDrinking());
@@ -115,7 +118,7 @@ public class UserLifeStyleAndEducationServiceImpl implements UserLifeStyleAndEdu
 				map.put("userLifeStyleAndEducation", savedDetails);
 				map.put("status", HttpStatus.OK.value());
 			} else {
-				map.put("Error", "UserLifeStyleAndEducation not found with ID: " + id);
+				map.put("Error", "UserLifeStyleAndEducation not found with mobileNumber: " + mobileNumber);
 				map.put("status", HttpStatus.NOT_FOUND.value());
 			}
 		} catch (Exception e) {

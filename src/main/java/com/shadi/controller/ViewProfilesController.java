@@ -24,7 +24,7 @@ public class ViewProfilesController {
 	private ViewAllService viewAllService;
 
 	@GetMapping("/profiles")
-	public ResponseEntity<Map<String, Object>> viewAllDetails(@RequestParam String gender,
+	public ResponseEntity<Map<String, Object>> viewAllDetails(@RequestParam(required = false) String gender,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "firstName") String sortBy) {
 

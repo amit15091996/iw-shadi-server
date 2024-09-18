@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,12 @@ public class UserProfileController {
 	}
 	
 	@GetMapping("/login-profile")
-	public ResponseEntity<Map<String, Object>> loginProfile(@RequestParam String mobileNumber, @RequestParam String password ) {
+	public ResponseEntity<Map<String, Object>> loginProfile(@RequestParam String mobileNumber, @RequestParam String password) {
 		return ResponseEntity.status(200).body(userRegistrationService.userLogin(mobileNumber, password));
+	}
+
+	@PutMapping("/update-profile")
+	public ResponseEntity<Map<String, Object>> updateUserProfile(@ModelAttribute UserRegistrationProfileDto dto) {
+		return ResponseEntity.status(200).body(userRegistrationService.updateProfile(dto));
 	}
 }

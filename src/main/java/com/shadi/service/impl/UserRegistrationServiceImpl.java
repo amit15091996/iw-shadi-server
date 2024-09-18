@@ -21,12 +21,14 @@ import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.UserRegistrationService;
 import com.shadi.utils.AppConstants;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
 	@Autowired
 	private UserProfileRegistrationRepo profileRegistrationRepo;
-
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -71,7 +73,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			map.put("status", HttpStatus.OK.value());
 		} catch (Exception e) {
 			map.put("message", "Profile creation failed");
-			System.out.println(e); // Add error message for better logging
+			System.out.println(e);
 		}
 		return map;
 	}
@@ -105,6 +107,45 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			throw new InternalServerError(e.getMessage());
 		}
 
+	}
+
+	@Override
+	public Map<String, Object> updateProfile(UserRegistrationProfileDto dto) {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			UserRegistrationProfile existingProfile = profileRegistrationRepo.findByMobileNumber(dto.getMobileNumber());
+
+			if (existingProfile == null) {
+				throw new GenericException("Profile with mobile number " + dto.getMobileNumber() + " not found.");
+			}
+
+			// Update the fields that are allowed to change
+			existingProfile.setFirstName(dto.getFirstName());
+			existingProfile.setLastName(dto.getLastName());
+			existingProfile.setAge(dto.getAge());
+			existingProfile.setGender(dto.getGender());
+			existingProfile.setLangKnown(dto.getLangKnown());
+			existingProfile.setCommunity(dto.getCommunity());
+			existingProfile.setResidence(dto.getResidence());
+			existingProfile.setReligion(dto.getReligion());
+			existingProfile.setDob(dto.getDob());
+			existingProfile.setUpdatedTime(LocalDateTime.now());
+
+			// Update the profile image if present
+			if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
+				existingProfile.setProfileImage(dto.getProfileImage().getBytes());
+				existingProfile.setExtension(dto.getProfileImage().getOriginalFilename());
+			}
+
+			profileRegistrationRepo.save(existingProfile);
+
+			map.put("message", "Profile updated successfully");
+			map.put("status", HttpStatus.OK.value());
+		} catch (Exception e) {
+			map.put("message", "Profile update failed");
+			map.put("details", e.getMessage());
+		}
+		return map;
 	}
 
 }

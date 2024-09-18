@@ -21,7 +21,8 @@ public class UserPersonalDetailsController {
 	public ResponseEntity<Map<String, Object>> saveUserPersonalDetails(
 			@RequestBody UserPersonalDetails userPersonalDetails, @RequestParam String mobileNumber) {
 		try {
-			Map<String, Object> response = userPersonalDetailsService.saveUserPersonalDetails(userPersonalDetails,mobileNumber);
+			Map<String, Object> response = userPersonalDetailsService.saveUserPersonalDetails(userPersonalDetails,
+					mobileNumber);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (GenericException e) {
 			return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -50,12 +51,11 @@ public class UserPersonalDetailsController {
 		}
 	}
 
-	@PutMapping("/update-user-personal-details/{id}")
-	public ResponseEntity<Map<String, Object>> updateUserPersonalDetails(@PathVariable Long id,
+	@PutMapping("/update-user-personal-details/{mobileNumber}")
+	public ResponseEntity<Map<String, Object>> updateUserPersonalDetails(@PathVariable String mobileNumber,
 			@RequestBody UserPersonalDetails userPersonalDetails) {
 		try {
-			userPersonalDetails.setUserPersonalId(id);
-			Map<String, Object> response = userPersonalDetailsService.updateUserPersonalDetails(userPersonalDetails);
+			Map<String, Object> response = userPersonalDetailsService.updateUserPersonalDetails(userPersonalDetails,mobileNumber);
 			return response.containsKey("UserPersonalDetails") ? new ResponseEntity<>(response, HttpStatus.OK)
 					: new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		} catch (GenericException e) {

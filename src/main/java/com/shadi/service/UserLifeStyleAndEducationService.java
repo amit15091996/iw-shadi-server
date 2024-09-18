@@ -13,6 +13,6 @@ public interface UserLifeStyleAndEducationService {
 
 	public Map<String, Object> getUserLifeStyleAndEducationDetailsById(Long userLifeStyleAndEducationId);
 
-	public Map<String, Object> updateUserLifeStyleAndEducationDetails(Long id,
+	public Map<String, Object> updateUserLifeStyleAndEducationDetails(String mobileNumber,
 			UserLifeStyleAndEducation userLifeStyleAndEducation);
 }

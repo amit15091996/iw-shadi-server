@@ -13,6 +13,7 @@ public interface UserPartnerPreferencesService {
 
 	public Map<String, Object> getUserPartnerPreferencesById(Long userLifeStyleAndEducationId);
 
-	public Map<String, Object> updateUserPartnerPreferences(Long id,
+	public Map<String, Object> updateUserPartnerPreferences(String mobileNumber,
 			UserPartnerPreferences userPartnerPreferences);
+
 }

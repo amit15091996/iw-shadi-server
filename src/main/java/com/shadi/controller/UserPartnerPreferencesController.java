@@ -59,12 +59,11 @@ public class UserPartnerPreferencesController {
 		}
 	}
 
-	@PutMapping("/update-user-partner-preferences/{id}")
-	public ResponseEntity<Map<String, Object>> updateUserPersonalDetails(@PathVariable Long id,
+	@PutMapping("/update-user-partner-preferences/{mobileNumber}")
+	public ResponseEntity<Map<String, Object>> updateUserPersonalDetails(@PathVariable String mobileNumber,
 			@RequestBody UserPartnerPreferences userPartnerPreferences) {
 		try {
-			userPartnerPreferences.setUserPartnerPreferencesId(id);
-			Map<String, Object> response = userPartnerPreferencesService.updateUserPartnerPreferences(id,
+			Map<String, Object> response = userPartnerPreferencesService.updateUserPartnerPreferences(mobileNumber,
 					userPartnerPreferences);
 			return response.containsKey("UserPartnerPreferences") ? new ResponseEntity<>(response, HttpStatus.OK)
 					: new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

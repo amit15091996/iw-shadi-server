@@ -57,6 +57,7 @@ public class UserRegistrationProfile implements UserDetails {
 	private LocalDate dob;
 	private String residence;
 	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 	private String extension;
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")
