@@ -32,6 +32,7 @@ public class ViewProfilesController {
 		try {
 			map = viewAllService.viewAll(gender, page, size, sortBy);
 		} catch (Exception e) {
+			
 			throw new GenericException(e);
 		}
 		return ResponseEntity.ok().body(map);

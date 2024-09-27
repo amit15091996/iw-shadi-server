@@ -3,6 +3,7 @@ package com.shadi.repo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.shadi.profile.entity.UserRegistrationProfile;
@@ -14,5 +15,6 @@ public interface UserProfileRegistrationRepo extends JpaRepository<UserRegistrat
 
 	Page<UserRegistrationProfile> findAllByGender(String gender, Pageable pageable);
 
+	@Query(name = "SELECT `mobile_number`, `age`, `community`, `confirm_password`, `created_time`, `dob`, `first_name`, `gender`, `lang_known`, `last_name`, `password`, `religion`, `residence`, `extension`, `updated_time` FROM `iw-shadi`.`user_registration_profile`;", nativeQuery = true)
 	UserRegistrationProfile findByMobileNumber(String mobileNumber);
 }

@@ -1,6 +1,7 @@
 package com.shadi.config;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.shadi.service.UserService;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -31,22 +31,21 @@ import com.shadi.service.UserService;
 @EnableConfigurationProperties
 public class ShadiConfiguration {
 
-
 	@Autowired
 	private CustomAuthentication customAuthentication;
-	
+
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	
+
 	@Autowired
 	private CustomAccessDeniedHandler customAccessDeniedHandler;
 
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -54,46 +53,40 @@ public class ShadiConfiguration {
 
 	@Bean
 	AuthenticationManager authManager(HttpSecurity http) throws Exception {
-		
+
 		AuthenticationManagerBuilder authenticationManagerBuilder = http
 				.getSharedObject(AuthenticationManagerBuilder.class);
-		authenticationManagerBuilder.userDetailsService( this.userService);
+		authenticationManagerBuilder.userDetailsService(this.userService);
 		authenticationManagerBuilder.authenticationProvider(this.customAuthentication);
 		return authenticationManagerBuilder.build();
 	}
 
 	@Bean
-	 CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://fino-client.vercel.app/","http://localhost:3000/")); // Allow requests from all origins
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed HTTP																				// methods
-		configuration.setAllowedHeaders(Arrays.asList("*")); // Allowed
-		configuration.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration); // Apply the configuration to all paths
-		return source;
+	CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    configuration.setAllowedOrigins(Collections.singletonList("*"));
+	    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    configuration.setAllowedHeaders(Arrays.asList("*")); 
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration); // Apply the configuration to all paths
+	    return source;
 	}
+
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    http.csrf(csrf -> csrf.disable())
-	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-	        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 //	            .requestMatchers("/api/v1/admin/**").authenticated()
 //	            .requestMatchers("/api/v1/user/**").authenticated()
-	            .requestMatchers("/api/v1/auth/**","/api/v1/user/**","/api/v1/admin/**","/api/**").permitAll()
-	        )
-	        .exceptionHandling(ex -> ex
-	            .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
-	            .accessDeniedHandler(this.customAccessDeniedHandler)
-	        )
-	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	        .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+						.requestMatchers("/api/v1/auth/**", "/api/v1/user/**", "/api/v1/admin/**", "/api/**")
+						.permitAll())
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
+						.accessDeniedHandler(this.customAccessDeniedHandler))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-	    return http.build();
+		return http.build();
 	}
-
-
-
 
 }

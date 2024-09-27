@@ -3,8 +3,10 @@ package com.shadi.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.tomcat.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,10 @@ import com.shadi.records.ProfileRecords;
 import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.ViewAllService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ViewAllServiceImpl implements ViewAllService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ViewAllServiceImpl.class);
@@ -46,8 +51,10 @@ public class ViewAllServiceImpl implements ViewAllService {
 //            
 			List<ProfileRecords> profiles = profilePage.getContent().stream()
 					.map(user -> new ProfileRecords(user.getMobileNumber(), user.getFirstName(), user.getLastName(),
-							user.getAge(), user.getGender(), String.join(", ", user.getLangKnown()), user.getReligion(),
-							user.getCommunity(), user.getDob(), user.getResidence()))
+							user.getAge(), user.getGender(),
+							Optional.ofNullable(user.getLangKnown()).map(langList -> String.join(", ", langList))
+									.orElse(""),
+							user.getReligion(), user.getCommunity(), user.getDob(), user.getResidence()))
 					.collect(Collectors.toList());
 
 			map.put("result", profiles);
@@ -92,17 +99,24 @@ public class ViewAllServiceImpl implements ViewAllService {
 		try {
 			if (mobNum != null) {
 				UserRegistrationProfile allRecords = this.userProfileRegistrationRepo.findByMobileNumber(mobNum);
+				log.info("allRecords {} " + allRecords);
+
+				String languages = Optional.ofNullable(allRecords.getLangKnown())
+						.filter(langList -> langList != null && !langList.isEmpty()) // Check if the list is not empty
+						.map(langList -> String.join(", ", langList)).orElse("NA"); // Default message when empty
+
 				AllUserRecord allUserRecord = new AllUserRecord(allRecords.getMobileNumber(), allRecords.getFirstName(),
-						allRecords.getLastName(), allRecords.getAge(), allRecords.getGender(),
-						String.join(", ", allRecords.getLangKnown()), allRecords.getReligion(),
-						allRecords.getCommunity(), allRecords.getDob(), allRecords.getResidence(),
-						allRecords.getUserFamilyDetails(), allRecords.getUserLifeStyleAndEducation(),
-						allRecords.getUserPersonalDetails(), allRecords.getUserPartnerPreferences());
+						allRecords.getLastName(), allRecords.getAge(), allRecords.getGender(), languages,
+						allRecords.getReligion(), allRecords.getCommunity(), allRecords.getDob(),
+						allRecords.getResidence(), allRecords.getUserFamilyDetails(),
+						allRecords.getUserLifeStyleAndEducation(), allRecords.getUserPersonalDetails(),
+						allRecords.getUserPartnerPreferences());
 				userMap.put("response", allUserRecord);
 			} else {
 				userMap.put("response", "Mobile number is Empty");
 			}
 		} catch (Exception e) {
+			System.out.println("Error : " + e.getMessage());
 			throw new GenericException("Something went wrong while fetching All User Details");
 		}
 		return userMap;

@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		log.info("token:- " + requestTokenHeader);
 	    final ObjectMapper mapper = new ObjectMapper();	
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setStatus(HttpServletResponse.SC_OK);
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		final Map<String, Object> errorMap = new HashMap<>();
 
 

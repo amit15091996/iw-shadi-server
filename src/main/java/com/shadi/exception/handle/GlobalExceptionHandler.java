@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 		notFound.put(AppConstants.timeStamp, customException.getTimestamp().toString());
 		notFound.put(AppConstants.statusMessage, customException.getMessage());
 		notFound.put(AppConstants.description, customException.getDescription());
-		return ResponseEntity.ok(notFound);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFound);
 
 	}
 
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
 		internalServerErrorMap.put(AppConstants.timeStamp, badRequestException.getTimestamp().toString());
 		internalServerErrorMap.put(AppConstants.statusMessage, badRequestException.getMessage());
 		internalServerErrorMap.put(AppConstants.description, badRequestException.getDescription());
-		return ResponseEntity.ok(internalServerErrorMap);
+		return ResponseEntity.internalServerError().body(internalServerErrorMap);
 
 	}
 
