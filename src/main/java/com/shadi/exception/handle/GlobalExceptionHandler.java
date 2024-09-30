@@ -22,6 +22,8 @@ import com.shadi.exception.NotFoundException;
 import com.shadi.utils.AppConstants;
 import com.shadi.utils.ConstantValues;
 import com.shadi.utils.ErrorResponse;
+import com.shadi.utils.ExtraResponse;
+import com.shadi.utils.ResponseStructure;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -72,10 +74,13 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-		// Handle access denied exception
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap("error", "Access Denied"));
+	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex,WebRequest request) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+				ResponseStructure.createErrorStructure(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.value(),ex.getMessage() , request.getDescription(false)
+						)
+				);
 	}
+//	new ExtraResponse<String>("err","amit")
 
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

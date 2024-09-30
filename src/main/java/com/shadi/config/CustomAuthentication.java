@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.shadi.exception.AccessDeniedException;
 import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.service.UserService;
 
@@ -29,16 +30,16 @@ public class CustomAuthentication implements AuthenticationProvider {
 		String password = (String) authentication.getCredentials();
 		 UserRegistrationProfile registrationProfile = this.userService.loadUserByUsername(mobileNumber);
 		if (registrationProfile == null || !registrationProfile.getMobileNumber().equalsIgnoreCase(mobileNumber)) {
-//			throw new Exception("Please check your mobile number");
+			throw new AccessDeniedException("Please check your mobile number");
 		}
 
 		else if (!this.passwordEncoder.matches(password, registrationProfile.getPassword())) {
-//			throw new Exception("Please check your password and try again....... ");
+			throw new AccessDeniedException("Incorrect Password, Please try again!!");
 		}
 		
-		else if (!registrationProfile.isEnabled()) {
-//			throw new Exception("sorry your account is inactive..........");
-		}
+//		else if (!registrationProfile.isEnabled()) {
+//			throw new AccessDeniedException("sorry your account is inactive..........");
+//		}
 
 		java.util.Collection<? extends GrantedAuthority> authorities = registrationProfile.getAuthorities();
 

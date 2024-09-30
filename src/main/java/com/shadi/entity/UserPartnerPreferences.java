@@ -1,7 +1,5 @@
 package com.shadi.entity;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.shadi.profile.entity.UserRegistrationProfile;
 
@@ -28,7 +26,7 @@ public class UserPartnerPreferences {
 	private long userPartnerPreferencesId;
 	private String familyStatus;
 	private String familyValue;
-	private List<String> preferredLocation;
+	private String preferredLocation;
 	private String desiredJobValue;
 	private String anyOtherPreferences;
 	@OneToOne(fetch = FetchType.LAZY)
