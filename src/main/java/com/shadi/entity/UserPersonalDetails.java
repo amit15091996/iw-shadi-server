@@ -33,7 +33,7 @@ public class UserPersonalDetails {
 	private String isPersonDisabled;
 	private String userIncome;
 	private String isUserStayingAlone;
-	private List<String> hobbies;
+	private String hobbies;
 	private String birthPlace;
 	private String complexion;
 	private String rashi;

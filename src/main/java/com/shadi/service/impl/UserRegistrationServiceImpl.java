@@ -148,4 +148,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		return map;
 	}
 
+	@Override
+	public Map<String, Object> forgotPassword(String mobileNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
