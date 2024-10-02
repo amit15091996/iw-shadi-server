@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.tomcat.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.shadi.records.AllUserRecord;
 import com.shadi.records.ProfileRecords;
 import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.ViewAllService;
+import com.shadi.utils.AppConstants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,14 +41,14 @@ public class ViewAllServiceImpl implements ViewAllService {
 			Page<UserRegistrationProfile> profilePage;
 
 			profilePage = userProfileRegistrationRepo.findAll(pageable);
-//            if (gender == null || gender.trim().isEmpty()) {
-//                // Fetch all profiles if gender is null
-//            } else {
-//                // Fetch profiles based on opposite gender
-//                String oppositeGender = getOppositeGender(gender);
-//                profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
-//            }
-//            
+            if (gender == null || gender.trim().isEmpty()) {
+                // Fetch all profiles if gender is null
+            } else {
+                // Fetch profiles based on opposite gender
+                String oppositeGender = getOppositeGender(gender);
+                profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
+            }
+            
 			List<ProfileRecords> profiles = profilePage.getContent().stream()
 					.map(user -> new ProfileRecords(user.getMobileNumber(), user.getFirstName(), user.getLastName(),
 							user.getAge(), user.getGender(),
@@ -69,15 +69,15 @@ public class ViewAllServiceImpl implements ViewAllService {
 		return map;
 	}
 
-//    private String getOppositeGender(String gender) {
-//        if (AppConstants.MALE.equalsIgnoreCase(gender)) {
-//            return AppConstants.FEMALE;
-//        } else if (AppConstants.FEMALE.equalsIgnoreCase(gender)) {
-//            return AppConstants.MALE;
-//        } else {
-//            throw new IllegalArgumentException("Invalid gender value: " + gender);
-//        }
-//    }
+    private String getOppositeGender(String gender) {
+        if (AppConstants.MALE.equalsIgnoreCase(gender)) {
+            return AppConstants.FEMALE;
+        } else if (AppConstants.FEMALE.equalsIgnoreCase(gender)) {
+            return AppConstants.MALE;
+        } else {
+            throw new IllegalArgumentException("Invalid gender value: " + gender);
+        }
+    }
 
 	@Override
 	public byte[] viewProfileImage(String mobileNumber) {
