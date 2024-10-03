@@ -1,5 +1,6 @@
 package com.shadi.controller;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +34,7 @@ public class ViewProfilesController {
 		try {
 			map = viewAllService.viewAll(gender, page, size, sortBy);
 		} catch (Exception e) {
-			
+
 			throw new GenericException(e);
 		}
 		return ResponseEntity.ok().body(map);
@@ -61,4 +63,10 @@ public class ViewProfilesController {
 		return ResponseEntity.ok(this.viewAllService.getAllUserDetails(mobileNumber));
 	}
 
+	@PostMapping("/forgot-password")
+	public ResponseEntity<Map<Object, Object>> resetPasswordMail(
+			@RequestParam(required = true) String mobileNumber,
+			@RequestParam(required = true) String dateOfBirth) {
+		return ResponseEntity.ok(this.viewAllService.resetPassword(mobileNumber, dateOfBirth));
+	}
 }

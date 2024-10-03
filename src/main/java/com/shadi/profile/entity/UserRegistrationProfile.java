@@ -46,6 +46,7 @@ public class UserRegistrationProfile implements UserDetails {
 	private String lastName;
 	private int age;
 	private String gender;
+	private String userMailId;
 	@Convert(converter = StringListConverter.class)
 	@Column(columnDefinition = "LONGTEXT")
 	private List<String> langKnown; // Store as List<String>

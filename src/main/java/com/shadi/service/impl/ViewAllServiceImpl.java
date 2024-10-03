@@ -1,5 +1,7 @@
 package com.shadi.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +15,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.shadi.exception.GenericException;
+import com.shadi.exception.InternalServerError;
 import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.records.AllUserRecord;
 import com.shadi.records.ProfileRecords;
 import com.shadi.repo.UserProfileRegistrationRepo;
 import com.shadi.service.ViewAllService;
 import com.shadi.utils.AppConstants;
+import com.shadi.utils.JavaMailUtil;
+import com.shadi.utils.RandomPasswordGenerator;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -34,6 +42,13 @@ public class ViewAllServiceImpl implements ViewAllService {
 	@Autowired
 	private UserProfileRegistrationRepo userProfileRegistrationRepo;
 
+	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	@Autowired
+	private JavaMailUtil javaMailUtil;
+
+	@Autowired
+	private RandomPasswordGenerator randomPasswordGenerator;
+
 	public Map<String, Object> viewAll(String gender, int page, int size, String sortBy) {
 		Map<String, Object> map = new HashMap<>();
 		try {
@@ -41,14 +56,14 @@ public class ViewAllServiceImpl implements ViewAllService {
 			Page<UserRegistrationProfile> profilePage;
 
 			profilePage = userProfileRegistrationRepo.findAll(pageable);
-            if (gender == null || gender.trim().isEmpty()) {
-                // Fetch all profiles if gender is null
-            } else {
-                // Fetch profiles based on opposite gender
-                String oppositeGender = getOppositeGender(gender);
-                profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
-            }
-            
+			if (gender == null || gender.trim().isEmpty()) {
+				// Fetch all profiles if gender is null
+			} else {
+				// Fetch profiles based on opposite gender
+				String oppositeGender = getOppositeGender(gender);
+				profilePage = userProfileRegistrationRepo.findAllByGender(oppositeGender, pageable);
+			}
+
 			List<ProfileRecords> profiles = profilePage.getContent().stream()
 					.map(user -> new ProfileRecords(user.getMobileNumber(), user.getFirstName(), user.getLastName(),
 							user.getAge(), user.getGender(),
@@ -69,15 +84,15 @@ public class ViewAllServiceImpl implements ViewAllService {
 		return map;
 	}
 
-    private String getOppositeGender(String gender) {
-        if (AppConstants.MALE.equalsIgnoreCase(gender)) {
-            return AppConstants.FEMALE;
-        } else if (AppConstants.FEMALE.equalsIgnoreCase(gender)) {
-            return AppConstants.MALE;
-        } else {
-            throw new IllegalArgumentException("Invalid gender value: " + gender);
-        }
-    }
+	private String getOppositeGender(String gender) {
+		if (AppConstants.MALE.equalsIgnoreCase(gender)) {
+			return AppConstants.FEMALE;
+		} else if (AppConstants.FEMALE.equalsIgnoreCase(gender)) {
+			return AppConstants.MALE;
+		} else {
+			throw new IllegalArgumentException("Invalid gender value: " + gender);
+		}
+	}
 
 	@Override
 	public byte[] viewProfileImage(String mobileNumber) {
@@ -120,5 +135,29 @@ public class ViewAllServiceImpl implements ViewAllService {
 			throw new GenericException("Something went wrong while fetching All User Details");
 		}
 		return userMap;
+	}
+
+	@Override
+	@Transactional
+	public Map<Object, Object> resetPassword(String mobileNumber, String dateOfBirth) {
+		var userDetails = this.userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
+
+		if (userDetails != null && userDetails.getMobileNumber().equalsIgnoreCase(mobileNumber)
+				&& userDetails.getDob().isEqual(LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("DD-MM-YYYY")))) {
+			var newPassword = this.randomPasswordGenerator.doGeneratePassword(11);
+			Map<Object, Object> mailMap = null;
+			try {
+				mailMap = this.javaMailUtil.sendTextMail(userDetails.getUserMailId(), "Login Credentials",
+						userDetails.getFirstName() + " " + userDetails.getLastName(), newPassword);
+				this.userProfileRegistrationRepo.updateFinoUserPassword(this.passwordEncoder.encode(newPassword),
+						mobileNumber);
+			} catch (Exception e) {
+				throw new InternalServerError(e.getMessage());
+			}
+
+			return mailMap;
+		} else {
+			throw new GenericException("Please check your userName or date of birth and try again...");
+		}
 	}
 }
