@@ -182,4 +182,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		return map;
 	}
 
+	@Override
+	public void deleteUserByMobNum(String mobileNumber) {
+		Map<String, String>map = new HashMap<>();
+		try {
+			profileRegistrationRepo.deleteById(mobileNumber);
+			map.put("message", "User Deleted Successfully");
+		} catch (Exception e) {
+			throw new GenericException("Error during deleting a user");
+		}
+		
+	}
+	
 }

@@ -14,4 +14,6 @@ public interface UserRegistrationService {
 	public Map<String, Object> updateProfile(UserRegistrationProfileDto dto);
 
 	public Map<String, Object> chnagePassword(String mobileNumber, ChangePasswordDto changePasswordDto);
+	
+	public void deleteUserByMobNum(String mobileNumber);
 }
