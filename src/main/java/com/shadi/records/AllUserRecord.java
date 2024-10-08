@@ -19,6 +19,7 @@ public record AllUserRecord(
     String community,
     LocalDate dob,
     String residence,
+    String mailId,
     UserFamilyDetails userFamilyDetails,
     UserLifeStyleAndEducation userLifeStyleAndEducation,
     UserPersonalDetails userPersonalDetails,

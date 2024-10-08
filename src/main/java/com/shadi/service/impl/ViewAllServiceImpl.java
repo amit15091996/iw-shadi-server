@@ -123,7 +123,7 @@ public class ViewAllServiceImpl implements ViewAllService {
 				AllUserRecord allUserRecord = new AllUserRecord(allRecords.getMobileNumber(), allRecords.getFirstName(),
 						allRecords.getLastName(), allRecords.getAge(), allRecords.getGender(), languages,
 						allRecords.getReligion(), allRecords.getCommunity(), allRecords.getDob(),
-						allRecords.getResidence(), allRecords.getUserFamilyDetails(),
+						allRecords.getResidence(),allRecords.getUserMailId(), allRecords.getUserFamilyDetails(),
 						allRecords.getUserLifeStyleAndEducation(), allRecords.getUserPersonalDetails(),
 						allRecords.getUserPartnerPreferences());
 				userMap.put("response", allUserRecord);
@@ -143,7 +143,7 @@ public class ViewAllServiceImpl implements ViewAllService {
 		var userDetails = this.userProfileRegistrationRepo.findByMobileNumber(mobileNumber);
 
 		if (userDetails != null && userDetails.getMobileNumber().equalsIgnoreCase(mobileNumber)
-				&& userDetails.getDob().isEqual(LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("DD-MM-YYYY")))) {
+				&& userDetails.getDob().isEqual(LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("dd-MM-yyyy")))) {
 			var newPassword = this.randomPasswordGenerator.doGeneratePassword(11);
 			Map<Object, Object> mailMap = null;
 			try {

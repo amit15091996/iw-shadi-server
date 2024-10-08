@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.shadi.config.JwtHelpers;
 import com.shadi.exception.GenericException;
 import com.shadi.exception.InternalServerError;
+import com.shadi.exception.NotFoundException;
+import com.shadi.profile.dto.ChangePasswordDto;
 import com.shadi.profile.dto.UserRegistrationProfileDto;
 import com.shadi.profile.entity.UserRegistrationProfile;
 import com.shadi.profile.entity.UserRoles;
@@ -56,6 +58,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			userRegistrationProfile.setResidence(dto.getResidence());
 			userRegistrationProfile.setReligion(dto.getReligion());
 			userRegistrationProfile.setDob(dto.getDob());
+			userRegistrationProfile.setUserMailId(dto.getMaildId());
 			userRegistrationProfile.setCreatedTime(LocalDateTime.now());
 
 			if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
@@ -100,8 +103,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 				userLoginMap.put(AppConstants.statusMessage, AppConstants.userLoggedInSuccesfully);
 				return userLoginMap;
 			} else {
-				throw new com.shadi.exception.NotFoundException(
-						"Sorry No user found with the given mobile number : " + mobileNumber);
+				throw new NotFoundException("Sorry No user found with the given mobile number : " + mobileNumber);
 			}
 		} catch (Exception e) {
 			throw new InternalServerError(e.getMessage());
@@ -130,6 +132,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			existingProfile.setReligion(dto.getReligion());
 			existingProfile.setDob(dto.getDob());
 			existingProfile.setUpdatedTime(LocalDateTime.now());
+			existingProfile.setUserMailId(dto.getMaildId());
 
 			// Update the profile image if present
 			if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
@@ -149,8 +152,34 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	}
 
 	@Override
-	public Map<String, Object> forgotPassword(String mobileNumber) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, Object> chnagePassword(String mobileNumber, ChangePasswordDto changePasswordDto) {
+		Map<String, Object> map = new HashMap<>();
+
+		// Check if new password and confirm password match
+//		if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
+//			throw new GenericException("New Password and confirm password should be the same ...");
+//		}
+
+		// Find the user by mobile number
+		UserRegistrationProfile isUserPresent = profileRegistrationRepo.findByMobileNumber(mobileNumber);
+		if (isUserPresent == null || isUserPresent.getMobileNumber() == null) {
+			throw new GenericException("Please Enter a valid User");
+		}
+
+		// Verify the old password
+		if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), isUserPresent.getPassword())) {
+			throw new GenericException("Old password is incorrect ...");
+		}
+
+		// Update the user's password
+		isUserPresent.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+		profileRegistrationRepo.save(isUserPresent);
+
+		// Prepare response
+		map.put("message", "Password changed successfully");
+		map.put("status", HttpStatus.OK.value());
+
+		return map;
 	}
+
 }

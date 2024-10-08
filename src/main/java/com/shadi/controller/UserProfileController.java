@@ -23,7 +23,7 @@ public class UserProfileController {
 
 	@Autowired
 	private UserRegistrationService userRegistrationService;
-	
+
 	@Autowired
 	private CustomAuthentication customAuthentication;
 
@@ -31,9 +31,10 @@ public class UserProfileController {
 	public ResponseEntity<Map<String, Object>> createUserProfile(@ModelAttribute UserRegistrationProfileDto dto) {
 		return ResponseEntity.status(201).body(userRegistrationService.createProfile(dto));
 	}
-	
+
 	@GetMapping("/login-profile")
-	public ResponseEntity<Map<String, Object>> loginProfile(@RequestParam String mobileNumber, @RequestParam String password) {
+	public ResponseEntity<Map<String, Object>> loginProfile(@RequestParam String mobileNumber,
+			@RequestParam String password) {
 		iwAuthentication(mobileNumber, password);
 		return ResponseEntity.status(200).body(userRegistrationService.userLogin(mobileNumber, password));
 	}
@@ -42,10 +43,13 @@ public class UserProfileController {
 	public ResponseEntity<Map<String, Object>> updateUserProfile(@ModelAttribute UserRegistrationProfileDto dto) {
 		return ResponseEntity.status(200).body(userRegistrationService.updateProfile(dto));
 	}
+
 	private void iwAuthentication(String mobileNumber, String password) {
 		UsernamePasswordAuthenticationToken userNamePasswordauth = new UsernamePasswordAuthenticationToken(mobileNumber,
 				password);
 		this.customAuthentication.authenticate(userNamePasswordauth);
 
 	}
+
+
 }
